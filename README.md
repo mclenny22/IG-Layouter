@@ -1,4 +1,4 @@
-Figma Plugin: Auto Layout Grid Helper
+<h1>Figma Plugin: Auto Layout Grid Helper</h1>
 
 Installation
 1. Download and Save: First, download this plugin folder to your computer.
