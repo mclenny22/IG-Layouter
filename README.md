@@ -1,13 +1,13 @@
 <h1>Figma Plugin: Auto Layout Grid Helper</h1>
 
-Installation
+<h3>Installation</h3>
 1. Download and Save: First, download this plugin folder to your computer.
 
-Import in Figma:
+<h3>Import in Figma:</h3>
 1. Open Figma and navigate to Plugins > Development > Import plugin from manifest.
 2. Browse to the downloaded folder and select manifest.json.
 
-Usage
+<h3>Usage</h3>
 1. Create an Auto Layout Grid: Begin by designing an auto layout grid within your Figma file.
 2. Select the Grid: Click on the grid you've created to select it.
 3. Open the Plugin: From the Figma menu, navigate to Plugins, find this plugin, and open it.
