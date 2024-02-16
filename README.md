@@ -1,40 +1,16 @@
-Below are the steps to get your plugin running. You can also find instructions at:
+Figma Plugin: Auto Layout Grid Helper
 
-  https://www.figma.com/plugin-docs/plugin-quickstart-guide/
+Installation
+1. Download and Save: First, download this plugin folder to your computer.
 
-This plugin template uses Typescript and NPM, two standard tools in creating JavaScript applications.
+Import in Figma:
+1. Open Figma and navigate to Plugins > Development > Import plugin from manifest.
+2. Browse to the downloaded folder and select manifest.json.
 
-First, download Node.js which comes with NPM. This will allow you to install TypeScript and other
-libraries. You can find the download link here:
+Usage
+1. Create an Auto Layout Grid: Begin by designing an auto layout grid within your Figma file.
+2. Select the Grid: Click on the grid you've created to select it.
+3. Open the Plugin: From the Figma menu, navigate to Plugins, find this plugin, and open it.
+4. Input Headline: A UI prompt will appear. Enter the headline of your post in the provided input field.
 
-  https://nodejs.org/en/download/
-
-Next, install TypeScript using the command:
-
-  npm install -g typescript
-
-Finally, in the directory of your plugin, get the latest type definitions for the plugin API by running:
-
-  npm install --save-dev @figma/plugin-typings
-
-If you are familiar with JavaScript, TypeScript will look very familiar. In fact, valid JavaScript code
-is already valid Typescript code.
-
-TypeScript adds type annotations to variables. This allows code editors such as Visual Studio Code
-to provide information about the Figma API while you are writing code, as well as help catch bugs
-you previously didn't notice.
-
-For more information, visit https://www.typescriptlang.org/
-
-Using TypeScript requires a compiler to convert TypeScript (code.ts) into JavaScript (code.js)
-for the browser to run.
-
-We recommend writing TypeScript code using Visual Studio code:
-
-1. Download Visual Studio Code if you haven't already: https://code.visualstudio.com/.
-2. Open this directory in Visual Studio Code.
-3. Compile TypeScript to JavaScript: Run the "Terminal > Run Build Task..." menu item,
-    then select "npm: watch". You will have to do this again every time
-    you reopen Visual Studio Code.
-
-That's it! Visual Studio Code will regenerate the JavaScript file every time you save.
+This plugin automates the design process by allowing you to quickly add headlines and captions within a structured layout. It's designed to enhance productivity, ensuring consistent and visually appealing designs across your projects.
