@@ -70,13 +70,13 @@ figma.ui.onmessage = async msg => {
         briefingLayout.appendChild(headlineText);
         briefingLayout.appendChild(captionText);
 
-        // Initialize and set up the 'Main Layout'
+        // Initialize and set up the 'Post Briefing'
         const mainLayout = figma.createFrame();
         mainLayout.layoutMode = "HORIZONTAL";
         mainLayout.primaryAxisSizingMode = "AUTO";
         mainLayout.counterAxisSizingMode = "AUTO";
         mainLayout.itemSpacing = 200;
-        mainLayout.name = "Main Layout";
+        mainLayout.name = "Post Briefing";
         mainLayout.paddingTop = 150;
         mainLayout.paddingRight = 150;
         mainLayout.paddingBottom = 150;
