@@ -1,93 +1,104 @@
 "use strict";
 
+// Display the plugin UI defined in ui.html
 figma.showUI(__html__);
 
+// Listen for messages sent from the UI
 figma.ui.onmessage = async msg => {
+    // Handle creation of new components based on UI instructions
     if (msg.type === 'create-components') {
-        // Get the center coordinates of the current view
         const centerX = figma.viewport.center.x;
         const centerY = figma.viewport.center.y;
-        
-        // Load the Inter font asynchronously
+
+        // Load fonts required for text elements
         await figma.loadFontAsync({ family: "Inter", style: "Regular" });
         await figma.loadFontAsync({ family: "Regola Pro", style: "Regular" });
 
-        // Create a text box "Headline" with font size 150 and content from user input
+        // Initialize and set up 'Headline' text element
         const headlineText = figma.createText();
         headlineText.name = "Headline";
-        headlineText.characters = msg.headline || "Headline"; // Use user input or default to "Headline"
-        headlineText.resize(1500, headlineText.height);
+        headlineText.characters = msg.headline || "Headline"; 
         headlineText.fontSize = 150;
-        headlineText.x = centerX - (headlineText.width / 2); // Center horizontally
-        headlineText.y = centerY - 200; // Position above the center
-        headlineText.fontName = { family: "Regola Pro", style: "Regular" }; // Use Inter font
+        headlineText.x = centerX - (headlineText.width / 2);
+        headlineText.y = centerY - 200;
+        headlineText.fontName = { family: "Regola Pro", style: "Regular" };
 
-        // Create a text box "Caption" with font size 100
+        // Initialize and set up 'Caption' text element
         const captionText = figma.createText();
         captionText.name = "Caption";
-        captionText.characters = "Caption"; // Default to "Caption"
-        captionText.resize(1500, captionText.height);
+        captionText.characters = "Caption";
         captionText.fontSize = 100;
-        captionText.x = centerX - (captionText.width / 2); // Center horizontally
-        captionText.y = centerY + 100; // Position below the center
-        captionText.fontName = { family: "Regola Pro", style: "Regular" }; // Use Inter font
-        
-        // Create an auto layout "Briefing" with vertical direction and gap of 100
+        captionText.x = centerX - (captionText.width / 2);
+        captionText.y = centerY + 100;
+        captionText.fontName = { family: "Regola Pro", style: "Regular" };
+
+        // Determine the size for 'Design' component based on UI selection
+        let designWidth, designHeight;
+        switch (msg.size) {
+            case 'IG Feed':
+                designWidth = 1080;
+                designHeight = 1080;
+                break;
+            case 'IG Reel':
+                designWidth = 1080;
+                designHeight = 1920;
+                break;
+            default:
+                designWidth = 1080; // Default width
+                designHeight = 1080; // Default height (square, like IG Feed)
+                break;
+        }
+
+        // Initialize and set up the 'Design' component
+        const designComponent = figma.createComponent();
+        designComponent.name = "Design";
+        designComponent.resize(designWidth, designHeight);
+        designComponent.clipsContent = true; // Ensure clipping of out-of-bound content
+        designComponent.x = centerX - (designComponent.width / 2);
+        designComponent.y = centerY + 200;
+        designComponent.fills = [{ type: 'SOLID', color: { r: Math.random(), g: Math.random(), b: Math.random() } }];
+
+        // Append 'Headline' and 'Caption' to 'Briefing' layout and set its properties
         const briefingLayout = figma.createFrame();
         briefingLayout.layoutMode = "VERTICAL";
         briefingLayout.primaryAxisSizingMode = "AUTO";
         briefingLayout.counterAxisSizingMode = "AUTO";
         briefingLayout.itemSpacing = 100;
         briefingLayout.name = "Briefing";
-        briefingLayout.x = centerX - (briefingLayout.width / 2); // Center horizontally
-        briefingLayout.y = centerY - 50; // Center vertically
-        briefingLayout.resize(1500, briefingLayout.height); // Resize to fit text boxes
+        briefingLayout.x = centerX - (briefingLayout.width / 2);
+        briefingLayout.y = centerY - 50;
         briefingLayout.appendChild(headlineText);
         briefingLayout.appendChild(captionText);
-        
-        // Create a component "Design" with size 1080px by 1080px and random background color
-        const designComponent = figma.createComponent();
-        designComponent.name = "Design";
-        designComponent.resize(1080, 1080);
-        designComponent.x = centerX - (designComponent.width / 2); // Center horizontally
-        designComponent.y = centerY + 200; // Position below the briefing layout
-        // Generate random color for the component background
-        const randomColor = {
-            r: Math.random(),
-            g: Math.random(),
-            b: Math.random(),
-        };
-        designComponent.fills = [{ type: 'SOLID', color: randomColor }];
-        
-        // Create an auto layout "Main Layout" with horizontal direction and gap of 200
+
+        // Initialize and set up the 'Main Layout'
         const mainLayout = figma.createFrame();
         mainLayout.layoutMode = "HORIZONTAL";
         mainLayout.primaryAxisSizingMode = "AUTO";
         mainLayout.counterAxisSizingMode = "AUTO";
         mainLayout.itemSpacing = 200;
         mainLayout.name = "Main Layout";
-        mainLayout.x = centerX - (mainLayout.width / 2); // Center horizontally
-        mainLayout.y = centerY + 600; // Position below the design component
-        mainLayout.cornerRadius = 100; // Set border radius to 100
-        mainLayout.paddingLeft = 150; // Add left padding of 150
-        mainLayout.paddingRight = 150; // Add right padding of 150
-        mainLayout.paddingTop = 150; // Add top padding of 150
-        mainLayout.paddingBottom = 150; // Add bottom padding of 150
+        mainLayout.paddingTop = 150;
+        mainLayout.paddingRight = 150;
+        mainLayout.paddingBottom = 150;
+        mainLayout.paddingLeft = 150;
+        mainLayout.cornerRadius = 100;
+        mainLayout.x = centerX - (mainLayout.width / 2);
+        mainLayout.y = centerY + 600;
         mainLayout.appendChild(briefingLayout);
         mainLayout.appendChild(designComponent);
-        
-        // Get the selected auto layout element
+
+        // Check if a frame is selected to insert the 'Design' instance
         const selectedNode = figma.currentPage.selection[0];
         if (selectedNode && selectedNode.type === 'FRAME' && selectedNode.layoutMode !== 'NONE') {
-            // Create an instance of the "Design" component and add it to the selected auto layout element
             const designInstance = designComponent.createInstance();
+            designInstance.resize(1080, 1080); // Force 'Design' instance size to 1080x1080
             selectedNode.appendChild(designInstance);
         }
 
-        // Select the briefing layout
+        // Set Figma's current selection to the 'Briefing' layout
         figma.currentPage.selection = [briefingLayout];
 
-        
+        // Close the plugin after execution
+        figma.closePlugin();
     }
-    figma.closePlugin();
 };
