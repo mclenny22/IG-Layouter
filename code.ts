@@ -1,34 +1,73 @@
-// This plugin will open a window to prompt the user to enter a number, and
-// it will then create that many rectangles on the screen.
-
-// This file holds the main code for plugins. Code in this file has access to
-// the *figma document* via the figma global object.
-// You can access browser APIs in the <script> tag inside "ui.html" which has a
-// full browser environment (See https://www.figma.com/plugin-docs/how-plugins-run).
-
-// This shows the HTML page in "ui.html".
+// Show the plugin UI in Figma
 figma.showUI(__html__);
 
-// Calls to "parent.postMessage" from within the HTML page will trigger this
-// callback. The callback will be passed the "pluginMessage" property of the
-// posted message.
-figma.ui.onmessage = msg => {
-  // One way of distinguishing between different types of messages sent from
-  // your HTML page is to use an object with a "type" property like this.
-  if (msg.type === 'create-rectangles') {
-    const nodes: SceneNode[] = [];
-    for (let i = 0; i < msg.count; i++) {
-      const rect = figma.createRectangle();
-      rect.x = i * 150;
-      rect.fills = [{type: 'SOLID', color: {r: 1, g: 0.5, b: 0}}];
-      figma.currentPage.appendChild(rect);
-      nodes.push(rect);
-    }
-    figma.currentPage.selection = nodes;
-    figma.viewport.scrollAndZoomIntoView(nodes);
-  }
+// Listen for messages sent from the plugin UI
+figma.ui.onmessage = async (msg: { type: string; headline?: string; size?: 'IG Feed' | 'IG Reel' }): Promise<void> => {
+    if (msg.type === 'create-components') {
+        const centerX: number = figma.viewport.center.x;
+        const centerY: number = figma.viewport.center.y;
 
-  // Make sure to close the plugin when you're done. Otherwise the plugin will
-  // keep running, which shows the cancel button at the bottom of the screen.
-  figma.closePlugin();
+        // Load required fonts
+        await Promise.all([
+            figma.loadFontAsync({ family: "Inter", style: "Regular" }),
+            figma.loadFontAsync({ family: "Regola Pro", style: "Regular" })
+        ]);
+
+        // Initialize and setup headline text
+        const headlineText: TextNode = figma.createText();
+        headlineText.name = "Headline";
+        headlineText.characters = msg.headline || "Headline";
+        headlineText.fontSize = 150;
+        headlineText.x = centerX - (headlineText.width / 2);
+        headlineText.y = centerY - 200;
+        headlineText.fontName = { family: "Regola Pro", style: "Regular" };
+
+        // Initialize and setup caption text
+        const captionText: TextNode = figma.createText();
+        captionText.name = "Caption";
+        captionText.characters = "Caption";
+        captionText.fontSize = 100;
+        captionText.x = centerX - (captionText.width / 2);
+        captionText.y = centerY + 100;
+        captionText.fontName = { family: "Regola Pro", style: "Regular" };
+
+        // Setup the layout frame for briefing
+        const briefingLayout: FrameNode = figma.createFrame();
+        briefingLayout.name = "Briefing";
+        // Additional properties like layout mode, sizing mode, and item spacing
+
+        // Determine design component dimensions and create it
+        let designWidth: number, designHeight: number;
+        if (msg.size === 'IG Feed') {
+            designWidth = 1080;
+            designHeight = 1080;
+        } else {
+            designWidth = 1080;
+            designHeight = 1920;
+        }
+        const designComponent: ComponentNode = figma.createComponent();
+        designComponent.name = "Design";
+        designComponent.resize(designWidth, designHeight);
+        designComponent.clipsContent = true;
+        // Additional properties like background color and positioning
+
+        // Add padding and rounded corners to the main layout frame
+        const mainLayout: FrameNode = figma.createFrame();
+        mainLayout.name = "Main Layout";
+        // Additional properties for layout, padding, and corner radius
+
+        // If a node is selected, add an instance of the Design component to it
+        const selectedNode: FrameNode | undefined = figma.currentPage.selection[0] as FrameNode;
+        if (selectedNode && selectedNode.type === 'FRAME' && selectedNode.layoutMode !== 'NONE') {
+            const designInstance: InstanceNode = designComponent.createInstance();
+            designInstance.resize(1080, 1080); // Fixed size for the instance
+            selectedNode.appendChild(designInstance);
+        }
+
+        // Select the newly created layout in the Figma file
+        figma.currentPage.selection = [mainLayout];
+
+        // Close the plugin once everything is done
+        figma.closePlugin();
+    }
 };
