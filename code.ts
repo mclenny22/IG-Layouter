@@ -76,7 +76,7 @@ figma.ui.onmessage = async (msg: { type: string; headline?: string; size?: 'IG F
         const selectedNode: FrameNode | undefined = figma.currentPage.selection[0] as FrameNode;
         if (selectedNode && selectedNode.type === 'FRAME' && selectedNode.layoutMode !== 'NONE') {
             const designInstance: InstanceNode = designComponent.createInstance();
-            designInstance.resize(1080, 1080); // Fixed size for the instance
+            designInstance.resize(designWidth, designHeight); // Match design component size
             selectedNode.appendChild(designInstance);
         }
 

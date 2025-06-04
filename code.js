@@ -79,7 +79,7 @@ figma.ui.onmessage = (msg) => __awaiter(void 0, void 0, void 0, function* () {
         const selectedNode = figma.currentPage.selection[0];
         if (selectedNode && selectedNode.type === 'FRAME' && selectedNode.layoutMode !== 'NONE') {
             const designInstance = designComponent.createInstance();
-            designInstance.resize(1080, 1080); // Fixed size for the instance
+            designInstance.resize(designWidth, designHeight); // Match design component size
             selectedNode.appendChild(designInstance);
         }
         // Select the newly created layout in the Figma file
