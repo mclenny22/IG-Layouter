@@ -34,7 +34,12 @@ figma.ui.onmessage = async (msg: { type: string; headline?: string; size?: 'IG F
         // Setup the layout frame for briefing
         const briefingLayout: FrameNode = figma.createFrame();
         briefingLayout.name = "Briefing";
-        // Additional properties like layout mode, sizing mode, and item spacing
+        briefingLayout.layoutMode = "VERTICAL";
+        briefingLayout.primaryAxisSizingMode = "AUTO";
+        briefingLayout.counterAxisSizingMode = "AUTO";
+        briefingLayout.itemSpacing = 100;
+        briefingLayout.appendChild(headlineText);
+        briefingLayout.appendChild(captionText);
 
         // Determine design component dimensions and create it
         let designWidth: number, designHeight: number;
@@ -54,7 +59,18 @@ figma.ui.onmessage = async (msg: { type: string; headline?: string; size?: 'IG F
         // Add padding and rounded corners to the main layout frame
         const mainLayout: FrameNode = figma.createFrame();
         mainLayout.name = "Main Layout";
-        // Additional properties for layout, padding, and corner radius
+        mainLayout.layoutMode = "HORIZONTAL";
+        mainLayout.primaryAxisSizingMode = "AUTO";
+        mainLayout.counterAxisSizingMode = "AUTO";
+        mainLayout.itemSpacing = 200;
+        mainLayout.paddingTop = 150;
+        mainLayout.paddingRight = 150;
+        mainLayout.paddingBottom = 150;
+        mainLayout.paddingLeft = 150;
+        mainLayout.cornerRadius = 100;
+        mainLayout.appendChild(briefingLayout);
+        mainLayout.appendChild(designComponent);
+        figma.currentPage.appendChild(mainLayout);
 
         // If a node is selected, add an instance of the Design component to it
         const selectedNode: FrameNode | undefined = figma.currentPage.selection[0] as FrameNode;

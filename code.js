@@ -1,29 +1,34 @@
 "use strict";
-
-// Display the plugin UI defined in ui.html
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+// Show the plugin UI in Figma
 figma.showUI(__html__);
-
-// Listen for messages sent from the UI
-figma.ui.onmessage = async msg => {
-    // Handle creation of new components based on UI instructions
+// Listen for messages sent from the plugin UI
+figma.ui.onmessage = (msg) => __awaiter(void 0, void 0, void 0, function* () {
     if (msg.type === 'create-components') {
         const centerX = figma.viewport.center.x;
         const centerY = figma.viewport.center.y;
-
-        // Load fonts required for text elements
-        await figma.loadFontAsync({ family: "Inter", style: "Regular" });
-        await figma.loadFontAsync({ family: "Regola Pro", style: "Regular" });
-
-        // Initialize and set up 'Headline' text element
+        // Load required fonts
+        yield Promise.all([
+            figma.loadFontAsync({ family: "Inter", style: "Regular" }),
+            figma.loadFontAsync({ family: "Regola Pro", style: "Regular" })
+        ]);
+        // Initialize and setup headline text
         const headlineText = figma.createText();
         headlineText.name = "Headline";
-        headlineText.characters = msg.headline || "Headline"; 
+        headlineText.characters = msg.headline || "Headline";
         headlineText.fontSize = 150;
         headlineText.x = centerX - (headlineText.width / 2);
         headlineText.y = centerY - 200;
         headlineText.fontName = { family: "Regola Pro", style: "Regular" };
-
-        // Initialize and set up 'Caption' text element
+        // Initialize and setup caption text
         const captionText = figma.createText();
         captionText.name = "Caption";
         captionText.characters = "Caption";
@@ -31,74 +36,55 @@ figma.ui.onmessage = async msg => {
         captionText.x = centerX - (captionText.width / 2);
         captionText.y = centerY + 100;
         captionText.fontName = { family: "Regola Pro", style: "Regular" };
-
-        // Determine the size for 'Design' component based on UI selection
-        let designWidth, designHeight;
-        switch (msg.size) {
-            case 'IG Feed':
-                designWidth = 1080;
-                designHeight = 1080;
-                break;
-            case 'IG Reel':
-                designWidth = 1080;
-                designHeight = 1920;
-                break;
-            default:
-                designWidth = 1080; // Default width
-                designHeight = 1080; // Default height (square, like IG Feed)
-                break;
-        }
-
-        // Initialize and set up the 'Design' component
-        const designComponent = figma.createComponent();
-        designComponent.name = "Design";
-        designComponent.resize(designWidth, designHeight);
-        designComponent.clipsContent = true; // Ensure clipping of out-of-bound content
-        designComponent.x = centerX - (designComponent.width / 2);
-        designComponent.y = centerY + 200;
-        designComponent.fills = [{ type: 'SOLID', color: { r: Math.random(), g: Math.random(), b: Math.random() } }];
-
-        // Append 'Headline' and 'Caption' to 'Briefing' layout and set its properties
+        // Setup the layout frame for briefing
         const briefingLayout = figma.createFrame();
+        briefingLayout.name = "Briefing";
         briefingLayout.layoutMode = "VERTICAL";
         briefingLayout.primaryAxisSizingMode = "AUTO";
         briefingLayout.counterAxisSizingMode = "AUTO";
         briefingLayout.itemSpacing = 100;
-        briefingLayout.name = "Briefing";
-        briefingLayout.x = centerX - (briefingLayout.width / 2);
-        briefingLayout.y = centerY - 50;
         briefingLayout.appendChild(headlineText);
         briefingLayout.appendChild(captionText);
-
-        // Initialize and set up the 'Post Briefing'
+        // Determine design component dimensions and create it
+        let designWidth, designHeight;
+        if (msg.size === 'IG Feed') {
+            designWidth = 1080;
+            designHeight = 1080;
+        }
+        else {
+            designWidth = 1080;
+            designHeight = 1920;
+        }
+        const designComponent = figma.createComponent();
+        designComponent.name = "Design";
+        designComponent.resize(designWidth, designHeight);
+        designComponent.clipsContent = true;
+        // Additional properties like background color and positioning
+        // Add padding and rounded corners to the main layout frame
         const mainLayout = figma.createFrame();
+        mainLayout.name = "Main Layout";
         mainLayout.layoutMode = "HORIZONTAL";
         mainLayout.primaryAxisSizingMode = "AUTO";
         mainLayout.counterAxisSizingMode = "AUTO";
         mainLayout.itemSpacing = 200;
-        mainLayout.name = "Post Briefing";
         mainLayout.paddingTop = 150;
         mainLayout.paddingRight = 150;
         mainLayout.paddingBottom = 150;
         mainLayout.paddingLeft = 150;
         mainLayout.cornerRadius = 100;
-        mainLayout.x = centerX - (mainLayout.width / 2);
-        mainLayout.y = centerY + 600;
         mainLayout.appendChild(briefingLayout);
         mainLayout.appendChild(designComponent);
-
-        // Check if a frame is selected to insert the 'Design' instance
+        figma.currentPage.appendChild(mainLayout);
+        // If a node is selected, add an instance of the Design component to it
         const selectedNode = figma.currentPage.selection[0];
         if (selectedNode && selectedNode.type === 'FRAME' && selectedNode.layoutMode !== 'NONE') {
             const designInstance = designComponent.createInstance();
-            designInstance.resize(1080, 1080); // Force 'Design' instance size to 1080x1080
+            designInstance.resize(1080, 1080); // Fixed size for the instance
             selectedNode.appendChild(designInstance);
         }
-
-        // Set Figma's current selection to the 'Briefing' layout
-        figma.currentPage.selection = [briefingLayout];
-
-        // Close the plugin after execution
+        // Select the newly created layout in the Figma file
+        figma.currentPage.selection = [mainLayout];
+        // Close the plugin once everything is done
         figma.closePlugin();
     }
-};
+});
