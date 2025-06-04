@@ -13,7 +13,7 @@ figma.ui.onmessage = async (msg: { type: string; headline?: string; size?: 'IG F
             figma.loadFontAsync({ family: "Regola Pro", style: "Regular" })
         ]);
 
-        // Initialize and setup headline text
+        // Initialize and set up headline text
         const headlineText: TextNode = figma.createText();
         headlineText.name = "Headline";
         headlineText.characters = msg.headline || "Headline";
@@ -22,7 +22,7 @@ figma.ui.onmessage = async (msg: { type: string; headline?: string; size?: 'IG F
         headlineText.y = centerY - 200;
         headlineText.fontName = { family: "Regola Pro", style: "Regular" };
 
-        // Initialize and setup caption text
+        // Initialize and set up caption text
         const captionText: TextNode = figma.createText();
         captionText.name = "Caption";
         captionText.characters = "Caption";
@@ -31,7 +31,7 @@ figma.ui.onmessage = async (msg: { type: string; headline?: string; size?: 'IG F
         captionText.y = centerY + 100;
         captionText.fontName = { family: "Regola Pro", style: "Regular" };
 
-        // Setup the layout frame for briefing
+        // Set up the layout frame for briefing
         const briefingLayout: FrameNode = figma.createFrame();
         briefingLayout.name = "Briefing";
         // Additional properties like layout mode, sizing mode, and item spacing
