@@ -35,6 +35,8 @@ figma.ui.onmessage = async (msg: { type: string; headline?: string; size?: 'IG F
         const briefingLayout: FrameNode = figma.createFrame();
         briefingLayout.name = "Briefing";
         // Additional properties like layout mode, sizing mode, and item spacing
+        briefingLayout.appendChild(headlineText);
+        briefingLayout.appendChild(captionText);
 
         // Determine design component dimensions and create it
         let designWidth: number, designHeight: number;
@@ -55,6 +57,8 @@ figma.ui.onmessage = async (msg: { type: string; headline?: string; size?: 'IG F
         const mainLayout: FrameNode = figma.createFrame();
         mainLayout.name = "Main Layout";
         // Additional properties for layout, padding, and corner radius
+        mainLayout.appendChild(briefingLayout);
+        mainLayout.appendChild(designComponent);
 
         // If a node is selected, add an instance of the Design component to it
         const selectedNode: FrameNode | undefined = figma.currentPage.selection[0] as FrameNode;
