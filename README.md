@@ -12,5 +12,6 @@
 2. Select the Grid: Click on the grid you've created to select it.<br>
 3. Open the Plugin: From the Figma menu, navigate to Plugins, find this plugin, and open it.<br>
 4. Input Headline: A UI prompt will appear. Enter the headline of your post in the provided input field.
+5. Generate Layout: Click either **IG Feed** or **IG Reel** to generate the layout.
 <br><br>
 This plugin automates the design process by allowing you to quickly add headlines and captions within a structured layout. It's designed to enhance productivity, ensuring consistent and visually appealing designs across your projects.
